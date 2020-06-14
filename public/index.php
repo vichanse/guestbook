@@ -23,6 +23,15 @@ if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
     Request::setTrustedHosts([$trustedHosts]);
 }
 
+Request::setTrustedProxies(
+// trust *all* requests (the 'REMOTE_ADDR' string is replaced at
+// run time by $_SERVER['REMOTE_ADDR'])
+    ['127.0.0.1', 'REMOTE_ADDR'],
+
+    // if you're using ELB, otherwise use a constant from above
+    Request::HEADER_X_FORWARDED_ALL
+);
+
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
